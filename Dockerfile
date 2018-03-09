@@ -60,10 +60,13 @@ RUN conda update conda && \
 
 # Install Jupyter Notebook and Hub and more good stuff
 RUN conda install --yes --quiet \
-    -c conda-forge jupyterhub \
-    jupyterlab geopandas \
-    ipywidgets beakerx && \
+    jupyterlab geopandas && \
     conda clean -tipsy 
+
+RUN conda install --yes --quiet \
+    -c conda-forge \ 
+    ipywidgets beakerx && \
+    conda clean -tipsy
 
 RUN jupyter labextension install @jupyterlab/hub-extension && \
     # Activate ipywidgets extension in the environment that runs the notebook server
@@ -87,22 +90,22 @@ RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot"
 # R packages including IRKernel which gets installed globally.
 RUN conda config --system --append channels r && \
     conda install --quiet --yes \
-    'rpy2=2.8*' \
-    'r-base=3.3.2' \
-    'r-irkernel=0.7*' \
-    'r-plyr=1.8*' \
-    'r-devtools=1.12*' \
-    'r-tidyverse=1.0*' \
-    'r-shiny=0.14*' \
-    'r-rmarkdown=1.2*' \
-    'r-forecast=7.3*' \
-    'r-rsqlite=1.1*' \
-    'r-reshape2=1.4*' \
-    'r-nycflights13=0.2*' \
-    'r-caret=6.0*' \
-    'r-rcurl=1.95*' \
-    'r-crayon=1.3*' \
-    'r-randomforest=4.6*' && \
+    rpy2 \
+    r-base \
+    r-irkernel \
+    r-plyr \
+    r-devtools \
+    r-tidyverse \
+    r-shiny \
+    r-rmarkdown \
+    r-forecast \
+    r-rsqlite \
+    r-reshape2 \
+    r-nycflights13 \
+    r-caret \
+    r-rcurl \
+    r-crayon \
+    r-randomforest && \
     conda clean -tipsy 
 
 # Install jupyter Spark Kernels
