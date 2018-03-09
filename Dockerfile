@@ -44,53 +44,32 @@ ENV CONDA_DIR=/opt/conda \
     LANGUAGE=en_US.UTF-8
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-ENV MINICONDA_VERSION 4.3.30
+ENV ANACONDA_VERSION 4.3.1
 RUN cd /tmp && \
-    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh && \
-    echo "0b80a152332a4ce5250f3c09589c7a81 *Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh" | md5sum -c - && \
-    /bin/bash Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
-    rm Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh && \
-    $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
-    $CONDA_DIR/bin/conda config --system --set auto_update_conda false && \
+    wget --quiet https://repo.continuum.io/archive/Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh && \
+    echo "9209864784250d6855886683ed702846 *Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh" | md5sum -c - && \
+    /bin/bash Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
+    rm Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh && \
     $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
     $CONDA_DIR/bin/conda update --all --quiet --yes && \
+    conda clean -tipsy
+
+RUN conda update conda && \
+    conda update anaconda && \
+    conda clean -tipsy
+
+# Install Jupyter Notebook and Hub and more good stuff
+RUN conda install --yes --quiet \
+    -c conda-forge jupyterhub \
+    jupyterlab geopandas \
+    ipywidgets beakerx && \
     conda clean -tipsy 
 
-# Install Jupyter Notebook and Hub
-RUN conda install --quiet --yes \
-    'notebook=5.2.*' \
-    'jupyterhub=0.8.*' \
-    'jupyterlab=0.31.*' \
-    'nomkl' \
-    'ipywidgets=7.1*' \
-    'pandas=0.19*' \
-    'numexpr=2.6*' \
-    'matplotlib=2.0*' \
-    'scipy=0.19*' \
-    'seaborn=0.7*' \
-    'scikit-learn=0.18*' \
-    'scikit-image=0.12*' \
-    'sympy=1.0*' \
-    'cython=0.25*' \
-    'patsy=0.4*' \
-    'statsmodels=0.8*' \
-    'cloudpickle=0.2*' \
-    'dill=0.2*' \
-    'numba=0.31*' \
-    'bokeh=0.12*' \
-    'sqlalchemy=1.1*' \
-    'hdf5=1.8.17' \
-    'h5py=2.6*' \
-    'vincent=0.4.*' \
-    'beautifulsoup4=4.5.*' \
-    'protobuf=3.*' \
-    'xlrd'  && \
-    conda clean -tipsy && \
-    jupyter labextension install @jupyterlab/hub-extension@^0.8.0 && \
+RUN jupyter labextension install @jupyterlab/hub-extension && \
     # Activate ipywidgets extension in the environment that runs the notebook server
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     # Also activate ipywidgets extension for JupyterLab
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager@^0.33.1 && \
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     npm cache clean && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging 
@@ -125,15 +104,6 @@ RUN conda config --system --append channels r && \
     'r-crayon=1.3*' \
     'r-randomforest=4.6*' && \
     conda clean -tipsy 
-
-# Update
-RUN conda update --all --yes
-
-# Install more goodies
-RUN conda install --yes --quiet \
-     -c conda-forge beakerx 
-
-RUN conda install --yes --quiet geopandas
 
 # Install jupyter Spark Kernels
 RUN pip install --no-cache-dir \
