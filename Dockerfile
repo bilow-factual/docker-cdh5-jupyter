@@ -56,33 +56,8 @@ RUN cd /tmp && \
 
 RUN conda update conda && \
     conda update anaconda && \
+    conda install -y geopandas jupyterlab && \
     conda clean -tipsy
-
-# Install Jupyter Notebook and Hub and more good stuff
-RUN conda install --yes --quiet \
-    jupyterlab geopandas && \
-    conda clean -tipsy 
-
-RUN conda install --yes --quiet \
-    -c conda-forge \ 
-    ipywidgets beakerx && \
-    conda clean -tipsy
-
-RUN jupyter labextension install @jupyterlab/hub-extension && \
-    # Activate ipywidgets extension in the environment that runs the notebook server
-    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    # Also activate ipywidgets extension for JupyterLab
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
-    npm cache clean && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging 
-
-# Install facets which does not have a pip or conda package at the moment
-RUN cd /tmp && \
-    git clone https://github.com/PAIR-code/facets.git && \
-    cd facets && \
-    jupyter nbextension install facets-dist/ --sys-prefix && \
-    rm -rf facets
 
 # Import matplotlib the first time to build the font cache.
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" 
@@ -108,10 +83,24 @@ RUN conda config --system --append channels r && \
     r-randomforest && \
     conda clean -tipsy 
 
+# Install facets which does not have a pip or conda package at the moment
+RUN cd /tmp && \
+    git clone https://github.com/PAIR-code/facets.git && \
+    cd facets && \
+    jupyter nbextension install facets-dist/ --sys-prefix && \
+    rm -rf facets
+
+RUN conda install --yes --quiet \
+    -c conda-forge \ 
+    ipywidgets beakerx && \
+    conda clean -tipsy
+
 # Install jupyter Spark Kernels
 RUN pip install --no-cache-dir \
-    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz \
-    && \
+    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz && \
     jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
 
-
+ADD aliases /tmp/aliases
+RUN cat /tmp/aliases >> .bashrc && \
+    source .bashrc && \
+    rm /tmp/aliases
