@@ -101,6 +101,5 @@ RUN pip install --no-cache-dir \
     jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
 
 ADD aliases /tmp/aliases
-RUN cat /tmp/aliases >> .bashrc && \
-    source .bashrc && \
-    rm /tmp/aliases
+RUN cat /tmp/aliases >> /root/.bashrc && rm /tmp/aliases
+WORKDIR /home
