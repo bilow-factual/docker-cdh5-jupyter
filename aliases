@@ -1,4 +1,0 @@
-labserve () {
-  jupyter lab --ip=0.0.0.0 --allow-root --no-browser --NotebookApp.token=''
-}
-alias labinit='kinit $MARATHON_APP_LABEL_OWNER@FACTUAL.COM && labserve'

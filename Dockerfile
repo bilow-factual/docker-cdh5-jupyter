@@ -100,6 +100,5 @@ RUN pip install --no-cache-dir \
     https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz && \
     jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
 
-ADD aliases /tmp/aliases
-RUN cat /tmp/aliases >> /root/.bashrc && rm /tmp/aliases
 WORKDIR /home
+
