@@ -96,9 +96,11 @@ RUN conda install --yes --quiet \
     conda clean -tipsy
 
 # Install jupyter Spark Kernels
-RUN pip install --no-cache-dir \
-    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz && \
-    jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
+#RUN pip install --no-cache-dir \
+#    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz && \
+#    jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
+RUN pip install sparkmagic && \
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 WORKDIR /home
 
