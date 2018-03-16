@@ -96,11 +96,14 @@ RUN conda install --yes --quiet \
     conda clean -tipsy
 
 # Install jupyter Spark Kernels
-RUN pip install --no-cache-dir \
-    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0-incubating-rc3/toree-pip/toree-0.2.0.tar.gz && \ 
-    jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
-RUN pip install --no-cache-dir sparkmagic && \
+#RUN pip install --no-cache-dir \
+#    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0-incubating-rc3/toree-pip/toree-0.2.0.tar.gz && \
+#    jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
+RUN pip install sparkmagic --no-cache-dir && \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+RUN wget --quiet http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.jar && \
+    mv bfg-1.13.0.jar /usr/bin/bfg.jar
 
 WORKDIR /home
 
