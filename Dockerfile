@@ -106,4 +106,5 @@ RUN wget --quiet http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.
     mv bfg-1.13.0.jar /usr/bin/bfg.jar
 
 WORKDIR /home
+ENV MAVEN_OPTS="-Xmx512m"
 
