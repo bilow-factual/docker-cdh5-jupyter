@@ -54,13 +54,11 @@ RUN cd /tmp && \
     $CONDA_DIR/bin/conda update --all --quiet --yes && \
     conda clean -tipsy
 
-RUN conda update conda && \
-    conda update anaconda && \
-    conda install -y geopandas jupyterlab && \
-    conda clean -tipsy
+RUN conda update --quiet --yes conda && \
+    conda clean -tipsy 
 
-# Import matplotlib the first time to build the font cache.
-RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" 
+RUN conda update --quiet --yes anaconda && \
+    conda clean -tipsy
 
 # R packages including IRKernel which gets installed globally.
 RUN conda config --system --append channels r && \
@@ -99,11 +97,21 @@ RUN conda install --yes --quiet \
 #RUN pip install --no-cache-dir \
 #    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz && \
 #    jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
-RUN pip install sparkmagic --no-cache-dir && \
+RUN pip install sparkmagic hdbscan --no-cache-dir && \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
-RUN wget --quiet http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.jar && \
-    mv bfg-1.13.0.jar /usr/bin/bfg.jar
+#RUN wget --quiet http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.jar && \
+#    mv bfg-1.13.0.jar /usr/bin/bfg.jar
 
+RUN conda install -y geopandas \
+    jupyterlab \
+    pymc3 && \
+    conda clean -tipsy
+
+
+RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" 
 WORKDIR /home
+ENV MAVEN_OPTS="-Xmx512m"
+# Import matplotlib the first time to build the font cache.
+
 
