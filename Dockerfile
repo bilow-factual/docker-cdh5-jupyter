@@ -57,6 +57,8 @@ RUN cd /tmp && \
 RUN conda update --quiet --yes conda && \
     conda clean -tipsy 
 
+# Install all conda packages first; then install other
+# requirements via pip
 RUN conda update --quiet --yes anaconda && \
     conda clean -tipsy
 
@@ -81,6 +83,17 @@ RUN conda config --system --append channels r && \
     r-randomforest && \
     conda clean -tipsy 
 
+RUN conda install --yes --quiet \
+    -c conda-forge \ 
+    ipywidgets beakerx && \
+    conda clean -tipsy
+
+RUN conda install --yes --quiet \
+    geopandas \
+    jupyterlab \
+    pymc3 && \
+    conda clean -tipsy
+
 # Install facets which does not have a pip or conda package at the moment
 RUN cd /tmp && \
     git clone https://github.com/PAIR-code/facets.git && \
@@ -88,30 +101,26 @@ RUN cd /tmp && \
     jupyter nbextension install facets-dist/ --sys-prefix && \
     rm -rf facets
 
-RUN conda install --yes --quiet \
-    -c conda-forge \ 
-    ipywidgets beakerx && \
-    conda clean -tipsy
-
 # Install jupyter Spark Kernels
 #RUN pip install --no-cache-dir \
 #    https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz && \
 #    jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
-RUN pip install sparkmagic hdbscan --no-cache-dir && \
+
+# Install pip packages *after* conda packages to avoid
+# having conda solve the environment.
+RUN pip install \
+    sparkmagic \
+    hdbscan \
+    fastcluster \
+    --no-cache-dir && \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 #RUN wget --quiet http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.jar && \
 #    mv bfg-1.13.0.jar /usr/bin/bfg.jar
 
-RUN conda install -y geopandas \
-    jupyterlab \
-    pymc3 && \
-    conda clean -tipsy
-
-
+# Import matplotlib the first time to build the font cache.
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" 
 WORKDIR /home
 ENV MAVEN_OPTS="-Xmx512m"
-# Import matplotlib the first time to build the font cache.
 
 
