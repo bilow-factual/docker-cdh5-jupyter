@@ -91,6 +91,7 @@ RUN conda install --yes --quiet \
 RUN conda install --yes --quiet \
     geopandas \
     jupyterlab \
+    pyspark \
     pymc3 && \
     conda clean -tipsy
 
