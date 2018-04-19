@@ -61,15 +61,15 @@ RUN cd /tmp && \
  /bin/bash Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
  rm Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh && \
  $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
- conda clean -tipsy
-
-RUN conda update --quiet --yes conda && \
+ conda update --quiet --yes conda && \
  conda update --quiet --yes anaconda && \ 
- conda clean -tipsy 
+ conda clean -tipsy
 
 # R packages including IRKernel which gets installed globally.
 RUN conda config --system --append channels r && \
  conda install --quiet --yes \
+ -c defaults \
+ -c conda-forge \ 
  rpy2 \
  r-base \
  r-irkernel \
@@ -86,20 +86,13 @@ RUN conda config --system --append channels r && \
  r-rcurl \
  r-crayon \
  r-randomforest && \
- conda clean -tipsy 
-
-RUN conda install --quiet --yes \
- -c conda-forge \ 
- ipywidgets \
- beakerx && \
- conda clean -tipsy
-
-RUN conda install --quiet --yes \
  geopandas \
  jupyterlab \
  pyspark \
- pymc3 && \
- conda clean -tipsy
+ pymc3 \
+ ipywidgets \
+ beakerx && \
+ conda clean -tipsy 
 
 # Install facets which does not have a pip or conda package at the moment
 RUN cd /tmp && \
