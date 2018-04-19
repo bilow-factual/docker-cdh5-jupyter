@@ -1,6 +1,9 @@
 FROM factual/docker-cdh5-dev
 RUN apt-get update && apt-get -yq dist-upgrade \
- && apt-get install -yq --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get install -yq --no-install-recommends \
     wget \
     bzip2 \
     ca-certificates \
@@ -83,12 +86,13 @@ RUN conda config --system --append channels r && \
     r-randomforest && \
     conda clean -tipsy 
 
-RUN conda install --yes --quiet \
+RUN conda install --quiet --yes \
     -c conda-forge \ 
-    ipywidgets beakerx && \
+    ipywidgets \
+    beakerx && \
     conda clean -tipsy
 
-RUN conda install --yes --quiet \
+RUN conda install --quiet --yes \
     geopandas \
     jupyterlab \
     pyspark \
@@ -115,6 +119,14 @@ RUN pip install \
     fastcluster \
     --no-cache-dir && \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+RUN cd /opt/conda/lib/python3.6/site-packages && \
+    jupyter-kernelspec install sparkmagic/kernels/sparkkernel && \
+    jupyter-kernelspec install sparkmagic/kernels/pysparkkernel && \
+    jupyter-kernelspec install sparkmagic/kernels/pyspark3kernel && \
+    jupyter-kernelspec install sparkmagic/kernels/sparkrkernel && \
+    jupyter serverextension enable --py sparkmagic
+
 
 #RUN wget --quiet http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.jar && \
 #    mv bfg-1.13.0.jar /usr/bin/bfg.jar
