@@ -85,7 +85,7 @@ RUN conda config --system --append channels r && \
  r-caret \
  r-rcurl \
  r-crayon \
- r-randomforest && \
+ r-randomforest \
  geopandas \
  jupyterlab \
  pyspark \
