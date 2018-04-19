@@ -117,7 +117,6 @@ RUN pip install \
 
 RUN cd /opt/conda/lib/python3.6/site-packages && \
  jupyter-kernelspec install sparkmagic/kernels/sparkkernel && \
- jupyter-kernelspec install sparkmagic/kernels/pysparkkernel && \
  jupyter-kernelspec install sparkmagic/kernels/pyspark3kernel && \
  jupyter-kernelspec install sparkmagic/kernels/sparkrkernel && \
  jupyter serverextension enable --py sparkmagic
