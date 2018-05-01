@@ -112,6 +112,13 @@ RUN pip install \
  sparkmagic \
  hdbscan \
  fastcluster \
+ ggplot \
+ dash \
+ dash-renderer \
+ dash-html-components \
+ dash-core-components \
+ plotly \
+ folium \
  --no-cache-dir && \
  jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
