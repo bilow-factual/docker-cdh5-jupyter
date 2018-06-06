@@ -44,6 +44,13 @@ RUN apt-get update && \
  apt-get clean && \
  rm -rf /var/lib/apt/lists/*
 
+RUN apt-get purge -y nodejs npm && \
+ curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+ apt-get install -yq --no-install-recommends \
+    nodejs && \
+ apt-get clean && \
+ rm -rf /var/lib/apt/lists/*
+
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
  locale-gen
 
@@ -126,11 +133,9 @@ RUN cd /opt/conda/lib/python3.6/site-packages && \
  jupyter-kernelspec install sparkmagic/kernels/sparkkernel && \
  jupyter-kernelspec install sparkmagic/kernels/pyspark3kernel && \
  jupyter-kernelspec install sparkmagic/kernels/sparkrkernel && \
- jupyter serverextension enable --py sparkmagic
+ jupyter serverextension enable --py sparkmagic && \
+ jupyter labextension install @jupyterlab/plotly-extension 
 
-
-#RUN wget --quiet http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.jar && \
-#    mv bfg-1.13.0.jar /usr/bin/bfg.jar
 
 # Import matplotlib the first time to build the font cache.
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" 
