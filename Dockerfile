@@ -110,12 +110,12 @@ RUN cd /tmp && \
 
 # Install jupyter Spark Kernels
 #RUN pip install --no-cache-dir \
-# https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz && \
+# https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0-incubating-rc5/toree/toree-0.2.0-incubating-bin.tar.gz && \
 # jupyter toree install --sys-prefix --interpreters=Scala,PySpark,SparkR,SQL
 
 # Install pip packages *after* conda packages to avoid
 # having conda solve the environment.
-RUN pip install \
+RUN pip install --no-cache-dir \
  sparkmagic \
  hdbscan \
  fastcluster \
@@ -125,9 +125,16 @@ RUN pip install \
  dash-html-components \
  dash-core-components \
  plotly \
- folium \
- --no-cache-dir && \
+ folium && \
  jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+# NLP
+RUN pip install --no-cache-dir \
+ mordecai \
+ rasa_nlu \
+ pytextrank \
+ spacy && \
+ python -m spacy download en
 
 RUN cd /opt/conda/lib/python3.6/site-packages && \
  jupyter-kernelspec install sparkmagic/kernels/sparkkernel && \
