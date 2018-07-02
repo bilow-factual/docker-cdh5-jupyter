@@ -1,4 +1,5 @@
-FROM factual/docker-cdh5-dev
+FROM registry.prod.factual.com/docker-cdh5-dev:latest
+
 RUN apt-get update && \
  apt-get install -yq --no-install-recommends \
  wget \
@@ -15,12 +16,7 @@ RUN apt-get update && \
  libsm6 \
  libxext-dev \
  libxrender1 \
- lmodern && \
- apt-get clean && \
- rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
- apt-get install -yq --no-install-recommends \
+ lmodern \
  pandoc \
  python-dev \
  vim \
@@ -29,12 +25,7 @@ RUN apt-get update && \
  fonts-dejavu \
  tzdata \
  gfortran \
- gcc && \
- apt-get clean && \
- rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
- apt-get install -yq --no-install-recommends \
+ gcc  \
  texlive-fonts-extra \
  texlive-fonts-recommended \
  texlive-generic-recommended \
@@ -60,16 +51,19 @@ ENV CONDA_DIR=/opt/conda \
  LANG=en_US.UTF-8 \
  LANGUAGE=en_US.UTF-8
 ENV PATH=$CONDA_DIR/bin:$PATH
-ENV ANACONDA_VERSION 4.3.1
+ENV ANACONDA_VERSION=Miniconda3-4.5.4-Linux-x86_64.sh
+# ENV ANACONDA_MD5=3e58f494ab9fbe12db4460dc152377b5
+ENV ANACONDA_MD5=a946ea1d0c4a642ddf0c3a26a18bb16d
+ENV PYTHON_VERSION=3.5
 
 RUN cd /tmp && \
- wget --quiet https://repo.continuum.io/archive/Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh && \
- echo "9209864784250d6855886683ed702846 *Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh" | md5sum -c - && \
- /bin/bash Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
- rm Anaconda3-${ANACONDA_VERSION}-Linux-x86_64.sh && \
+ wget --quiet https://repo.continuum.io/miniconda/${ANACONDA_VERSION} && \
+ echo "${ANACONDA_MD5} *${ANACONDA_VERSION}" | md5sum -c - && \
+ /bin/bash ${ANACONDA_VERSION} -f -b -p $CONDA_DIR && \
+ rm ${ANACONDA_VERSION} && \
  $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
+ conda install python=${PYTHON_VERSION} anaconda && \
  conda update --quiet --yes conda && \
- conda update --quiet --yes anaconda && \ 
  conda clean -tipsy
 
 # R packages including IRKernel which gets installed globally.
@@ -129,14 +123,14 @@ RUN pip install --no-cache-dir \
  jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 # NLP
-RUN pip install --no-cache-dir \
- mordecai \
- rasa_nlu \
- pytextrank \
- spacy && \
- python -m spacy download en
+#RUN pip install --no-cache-dir \
+# mordecai \
+# rasa_nlu \
+# pytextrank \
+# spacy && \
+# python -m spacy download en
 
-RUN cd /opt/conda/lib/python3.6/site-packages && \
+RUN cd /opt/conda/lib/python${PYTHON_VERSION}/site-packages && \
  jupyter-kernelspec install sparkmagic/kernels/sparkkernel && \
  jupyter-kernelspec install sparkmagic/kernels/pyspark3kernel && \
  jupyter-kernelspec install sparkmagic/kernels/sparkrkernel && \
