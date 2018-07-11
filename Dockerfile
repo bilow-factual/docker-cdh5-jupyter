@@ -1,4 +1,4 @@
-FROM registry.prod.factual.com/docker-cdh5-dev:latest
+FROM factual/docker-cdh5-dev
 
 RUN apt-get update && \
  apt-get install -yq --no-install-recommends \
